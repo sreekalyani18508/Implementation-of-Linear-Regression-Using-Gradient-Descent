@@ -1,84 +1,87 @@
-# Implementation-of-Simple-Linear-Regression-Model-for-Predicting-the-Marks-Scored
+# Implementation-of-Linear-Regression-Using-Gradient-Descent
 
 ## AIM:
-To write a program to predict the marks scored by a student using the simple linear regression model.
+To write a program to predict the profit of a city using the linear regression model with gradient descent.
 
 ## Equipments Required:
 1. Hardware – PCs
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-1.Load the dataset into a DataFrame and explore its contents to understand the data structure.
+1.Import the required library and read the dataframe.
 
-2.Separate the dataset into independent (X) and dependent (Y) variables, and split them into training and testing sets.
+2.Write a function compute Cost to generate the cost function.
 
-3.Create a linear regression model and fit it using the training data.
+3.Perform iterations of gradient steps with learning rate.
 
-4.Predict the results for the testing set and plot the training and testing sets with fitted lines.
+4.Plot the Cost function using Gradient Descent and generate the required graph.
 
 ## Program:
 ```
 DEVELOPED BY: JEENSFER JO
-# Step 1: Import Libraries
-import numpy as np
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
 
-# Step 2: Create Dataset (Hours studied vs Marks scored)
-data = {
-    "Hours_Studied": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    "Marks_Scored":  [35, 40, 50, 55, 60, 65, 70, 80, 85, 95]
-}
-df = pd.DataFrame(data)
+#Load the Data
+data=pd.read_csv("C:/Users/acer/Downloads/50_Startups.csv")
+x=data["R&D Spend"].values
+y=data["Profit"].values
 
-# Display dataset
-print("Dataset:\n", df.head())
-df
-# Step 3: Split into Features and Target
-X = df[["Hours_Studied"]]   # Independent variable
-y = df["Marks_Scored"]      # Dependent variable
+#Feature Scaling
+x_mean=np.mean(x)
+x_std=np.std(x)
+x=(x-x_mean)/x_std
 
-# Step 4: Train-test split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-# Step 5: Train Linear Regression Model
-model = LinearRegression()
-model.fit(X_train, y_train)
+#Parameters
+w=0.0
+b=0.0
+alpha=0.01
+epochs=100
+n=len(x)
 
-# Step 6: Predictions
-y_pred = model.predict(X_test)
+losses=[]
 
-# Step 7: Model Evaluation
-print("\nModel Parameters:")
-print("Intercept (b0):", model.intercept_)
-print("Slope (b1):", model.coef_[0])
+#Gradient Descent
+for i in range(epochs):
+    y_hat=w*x+b
+    loss=np.mean((y_hat-y)**2)
+    losses.append(loss)
+    
+    dw=(2/n)*np.sum((y_hat-y)*x)
+    db=(2/n)*np.sum(y_hat-y)
+    
+    w-=alpha*dw
+    b-=alpha*db
 
-print("\nEvaluation Metrics:")
-print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
-print("R² Score:", r2_score(y_test, y_pred))
+#Plot
+plt.figure(figsize=(12,5))
 
-# Step 8: Visualization
-plt.figure(figsize=(8,6))
-plt.scatter(X, y, color='blue', label="Actual Data")
-plt.plot(X, model.predict(X), color='red', linewidth=2, label="Regression Line")
-plt.xlabel("Hours Studied")
-plt.ylabel("Marks Scored")
-plt.title("Simple Linear Regression: Predicting Marks")
-plt.legend()
-plt.grid(True)
+plt.subplot(1,2,1)
+plt.plot(losses)
+plt.xlabel("Iterations")
+plt.ylabel("Loss(MSE)")
+plt.title("Loss vs Iterations")
+
+plt.subplot(1,2,2)
+plt.scatter(x,y)
+x_sorted=np.argsort(x)
+plt.plot(x[x_sorted],(w*x+b)[x_sorted],color="red")
+plt.xlabel("R&D Spend (scaled)")
+plt.ylabel("Profit")
+plt.title("Linear Regression Fit")
+
+plt.tight_layout()
 plt.show()
+
+print(f"Final weight (w): {w}")
+print(f"Final bias (b): {b}")
 ```
 
 ## Output:
-<img width="459" height="782" alt="image" src="https://github.com/user-attachments/assets/e621f69f-2ef9-438e-afd8-5b08782dbc8a" />
-<img width="539" height="262" alt="image" src="https://github.com/user-attachments/assets/6e198285-8b92-451a-9335-97d75cb55f18" />
-<img width="771" height="565" alt="image" src="https://github.com/user-attachments/assets/b2203277-ba1f-46cc-93f8-6782cb3046b7" />
+<img width="1004" height="462" alt="image" src="https://github.com/user-attachments/assets/4ffb6b0b-b257-4c19-a5c3-b40ee9140872" />
 
 
 
 ## Result:
-Thus the program to implement the simple linear regression model for predicting the marks scored is written and verified using python programming.
+Thus the program to implement the linear regression using gradient descent is written and verified using python programming.
